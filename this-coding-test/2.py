@@ -1,6 +1,6 @@
 # 선택 정렬과 기본 정렬 라이브러리의 수행 시간 비교
 from random import randint
-import time
+import time 
 
 # 배열에 10,000 개의 정수를 삽입
 array = []
