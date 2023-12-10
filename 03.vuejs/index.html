@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue Sample</title>
+    <style>
+      .demo{
+        width: 100px;
+        height: 100px;
+        background-color:grey;
+        display:inline-block;
+        margin: 10px;
+      }
+
+      .red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.blue {
+  background-color: blue;
+}
+
+    </style>
+  </head>
+  <body>
+      <div id="app">
+        <!-- <p>{{message}}</p> -->
+
+
+        <!-- title 불러오기 -->
+        <!-- <p>{{ sayHello() }}</p>  -->
+        <p>{{ howAreYou() }}</p>
+        
+        <!-- 전체 문법 -->
+        <P><a v-bind:href="link">링크</a></P>
+        <!-- 약어 -->
+        <P><a :href="link">약어 링크</a></P>
+
+        <!-- 전체 문법 -->
+        <!-- <p><a v-on:click="doSomething"></a></p> -->
+        <!-- 약어 -->
+        <!-- <p><a @click="doSomething"></a></p> -->
+
+        <!-- v-once 디렉티브  일회성디렉티브 -->
+        <h1 v-once>{{title }} </h1> <!-- {{title}}은 변경되기전 안녕VueJS222가 출력-->
+        <p>{{ sayHello() }}</p>  <!-- v-once 디렉티브는 HTML코드로 출력된 이후 어떤 후처리가 있더라도 처음 출력한 값을 유지-->
+
+        <!-- v-html 디렉티브 HTML 코드를 직접적입력-->
+        <p v-html="aLinkToMedium"></p>
+
+        <!-- 생성된 주사위 값 number 출력, 주사위를 던질 버튼 생성-->
+        {{number}} <!-- 주사위 수-->
+        <button v-on:click="rollDice()">주사위 던지기</button>
+        <!-- v-on:dblclick="함수"  --> <!-- 더블 클릭 이벤트-->
+        <button @dblclick="doubleClick()">더블클릭시</button>
+        <!-- mousemove 태그위로 마우스 올라간 상태에서 마우스가 움직일때 이벤트 -->
+        <P>{{mouseoverCount}}</P>
+        <div @mousemove="addCount()">마우스 올리고 움직이면 증가
+          <span @mousemove.stop="">이 구간에선 중지</span> <!-- Event Modifier 이벤트 조정자-->
+          여기선 정상 작동
+        </div>
+
+        <!-- 키보드 이벤트 Key Event-->
+        <input @keyup.enter="login()" placeholder="아이디를 입력하세요">
+
+        {{mouseclickCount}} <!-- 마우스 클릭 횟수-->
+        <button v-on:click="mouseclickCount++">마우스 클릭</button>
+
+        <!-- {{mustache 에 JS 코드 넣기 }}-->
+        {{mouseclickCount * 3}}
+        <button v-on:click="mouseclickCount++">마우스 클릭 [2]</button>
+
+        <!-- 좀더 복잡한 코드 삼항 연산자와 부등호를 넣어 조건에 따른 결과 출력-->
+        {{ mouseclickCount * 3 > 10 ? "10보다 큽니다." : "10보다 작거나 같습니다"}}
+        <button v-on:click="mouseclickCount++">마우스 클릭 [3]</button>
+
+        <!-- computed 예제-->
+        {{ isLargerThanTen}}
+        <button v-on:click="mouseclickCount++">마우스 클릭 [4]</button>
+
+        <p>mouseclickCount : {{ mouseclickCount}}</p>
+        <p>secondCount  : {{ secondCount}}</p>
+        <p>computed : {{ double }}</p>
+        <p>methods : {{ triple() }}</p>
+        <button v-on:click="mouseclickCount++">computed 예제 버튼 [1]</button>
+        <button v-on:click="secondCount++">computed methoeds 비교 버튼 [2] console 확인</button>
+
+        <p v-if="dog">반려동물은 강아지</p> <!-- v-if="조건" v-else-if  v-else-->
+        <p v-else>아니다 반려동물은 고양이</p>
+        <button @click="dog = !dog">반대</button>
+
+        <!-- template를 활용한 조건부 그룹-->
+        <template v-if="dog">
+          <p>강아지는 귀엽다</p>
+          <p>집에오면 날 반겨준다</p>
+          <p>강아지는 집을 지켜준다</p>
+        </template>
+        <template v-else>
+          <p>고양이는 귀엽다</p>
+          <p>고양이는 시크한 매력이있다</p>
+          <p>고양이에게 간택받길 원한다.</p>
+        </template>
+
+        <p v-show="dog">v-show 태그 </p> <!-- v-show 태그는 실제로 코드는 삽입되지만 display:none 스타일로 보이지않음-->
+        <!-- 따라서 조건에 따라 코드를 지우고 싶다면 v-if 코드는 있지만 스타일 none 처리를 하려면 v-show -->
+
+        <!-- click시 attachRed true/false 변경 ,,, :class로 object를 바인딩-->
+        <!-- 속성키로 들어간 red와 green은 클래스명이며 각각의 값은 해당 클래스가 적용되는 조건-->
+        <!-- 즉 red 라는 클래스는 attachRed가 true인 경우 적용 , green 클래스는 attachRed가 false인 경우에 적용-->
+        <div class="demo" @click="attachRed = !attachRed" :class="{red:attachRed, green: !attachRed}">클래스 스타일 바인딩1</div>
+
+        <!-- v-bind:class 가 문자열을 받는경우 -->
+        <!-- color는 green이라는 문자열로 data 객체내에 정의되어 있음-->
+        <!-- 하단에 v-model="color" input박스안에 입력하는 문자가 그대로 color에 바인딩 됨-->
+        <!-- 스타일바인딩 -->
+        <div class="demo" :class="color" :style="{height : myHeight}">클래스 스타일 바인딩2</div>
+
+        <!-- v-bind:class 의 객체가 복잡한 경우 -->
+        <!-- 1번박스와 같은 객체를 return 함 복잡한 조건의 경우 이런식으로 computed나 methods에서 반환되는 객체 혹은 문자열을
+        클래스로 바인딩 시킴.-->
+        <div class="demo" :class="divClasses">클래스 스타일 바인딩3</div>
+
+        <div>
+          2번 상자의 색 : <input type="text" v-model="color">
+        </div>
+
+        <h1>{{watchcount}}</h1>
+        <p>{{watchtext}}</p>
+        <button @click="watchcount--">카운트 감소합니다.</button>
+
+        <h1>{{Acount}}</h1>
+        <h2>computed : {{ calculated}}</h2>
+        <h2>watch : {{ Bcount}}</h2>
+        <button @click="Acount--">카운트 감소합니다</button>
+      </div>
+
+      <div id="app2">
+          {{title}}
+      </div>
+    <hr>
+
+    <div id="vm1">
+      {{title}}
+    </div>
+
+    <div id="vm2">
+      {{title}}
+      <button @click="onChange">변경버튼</button>
+    </div>
+
+    <div id="comApp">
+      <hello></hello>
+      <hello></hello>
+      <hello></hello>
+    </div>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.5.2/dist/vue.js"></script>
+      <script type="text/javascript">
+        // 새롭게 Vue 선언
+        new Vue({
+          el: '#app', // 어떤 요소에 적용할지 여기에서는 HTML 코드 id='app'인 DIV 태그 지정
+          data:{
+            message : 'Vue 메시지', // data는 VueJS에서 사용할정보를 선언
+            title : "안녕 VueJS222",
+            link : "https:www.naver.com",
+            aLinkToMedium : "<a href='https://naver.com'>v-html디렉티브</a>",
+            number : 0, // 주사위의 숫자를 저장할 변수
+            mouseoverCount : 0,    // 마우스 오버시 증가될 변수
+            mouseclickCount : 0 ,   // Template에 직접 코드 넣기 예제 클릭횟수를 저장 변수
+            secondCount : 0 ,
+            dog : false,  // 조건부 렌더링 v-if , v-else 예제 // v-show 차이를 보기위해 false 설정
+            // 클래스 바인딩
+            attachRed: false,
+            color : 'green',
+            watchcount : 3,
+            watchtext : "변경전 데이터",
+            Acount : 3,
+            Bcount : 9,
+          }, // data는 Vue가 가지고 있는 정보들의 저장소 / 그 안에있는 값 꺼내서 쓸때는 this 키워드
+          methods:{ // 함수들을 저장하고 있는곳 method
+            howAreYou: function () {
+              return "기분이 어때?"
+            },
+            sayHello: function(){
+              this.title = '안녕 VueJS v-once 변경' // v-once 태그
+              return this.title // this는 Vue를 가리킨다
+            },
+            rollDice: function(){ // 주사위를 던졌을때 실행되는 함수
+              // 임의의 변수 N을 설정하여 1-6 사이의 임의숫자 반환
+              let N = Math.floor(Math.random()*(6)) + 1;
+              // 인스턴스 내부의 값 불러올떄 this 키워드
+              this.number = N;
+            },
+            doubleClick: function(){
+              console.log('더블클릭됨');
+            },
+            addCount() {
+              this.mouseoverCount++;
+            },
+            login() {
+              alert('로그인 되었습니다.')
+            },
+            triple(){
+              console.log('methods triple Clicked')
+              return this.mouseclickCount * 3
+            }
+          },
+          computed:{
+            isLargerThanTen : function(){
+              return this.mouseclickCount*3 > 10 ? "10보다 큽니다." : "10보다 작거나 같습니다."
+            },
+            double(){
+              console.log('Computed double Clicked')
+              return this.mouseclickCount * 2
+            },
+            divClasses(){
+              return {
+                red:this.attachRed,
+                green: !this.attachRed
+              }
+            },
+            myHeight(){
+              return this.attachRed ? '50px' : '200px'
+            },
+            calculated(){
+              if (this.Acount === 2) {
+                //alert('값이 2가되었습니다.') computed의 calculated 함수를 실행하기위해선 calculated를 실제로 출력해야함
+              }
+              return this.Acount * 3
+            }
+          },
+          watch:{
+            watchcount(newVal,oldVal){ // data에 선언되어있는 watchcount가 그대로 선언되있어 Vue 인스턴스내에 선언된 값의 변화를
+            // 감시하는 역할을 한다
+              this.watchtext = oldVal + '에서' + newVal + '로 변경되었습니다.'
+            },
+            Acount(newVal){
+              if (newVal == 0) { // 동일한 역할을 computed에서 하면 아무일도 일어나지않는다.
+                alert('값이 0이 되었습니다.')
+                this.Acount = 3
+              }
+              //this.Bcount = newVal * 3
+            }
+          }
+        });
+
+        // 2번째 Vue 인스턴스
+        new Vue({
+          el : '#app2',
+          data:{
+            title : '두번째 인스턴스'
+          }
+        });
+
+        var createdData = {
+          title : '첫 인스턴스 Data'
+        }
+
+        var vm1 = new Vue({ // vue model 통용 약어
+          el : '#vm1',
+          data : createdData
+          // data:{
+          //   title : '첫 인스턴스'
+          // }
+        });
+
+        setTimeout(() => {
+          vm1.title = 'Changed By Timer'
+        }, 3000);
+
+        var vm2 = new Vue({
+          el : '#vm2',
+          data:{
+            title : '두번쨰 인스턴스'
+          },
+          methods:{
+            onChange:function(){
+              vm1.title = '변경됨'
+            }
+          }
+        });
+
+        Vue.component('hello',{ // 'hello'는 우리가 사용할 컴포넌트 태그명
+        // template 속성은 출력할 HTML 코드를 입력
+          template:'<h1>{{title}} <button @click="changeTitle">타이틀변경버튼</button> </h1>', // 두번째 인자는 Vue 인스턴스의 속성(data,methods 등) 정의
+          data:function(){ // 이전에는 data를 객체형태로 선언해서 사용했지만 컴포넌트에선 함수로 사용해야함
+              return{
+                title:'안녕하세요!!'
+              }
+          },
+          methods:{
+            changeTitle(){
+              this.title = '변경된 타이틀'// 한개의 버튼을 눌러도 모든 컴포넌트의 title이 변경될것 같지만
+              // 각 컴포넌트들은 독립적이어서 한개의 버튼은 해당 컴포넌트의 title만 변경시킨다. (독립성 보장)
+            }
+          }
+        })
+
+        new Vue({
+          el : "#comApp"
+        })
+      </script>
+      <!-- 
+
+        VusJS 디렉티브 v-bind , v-once , v-html 출력과 관련이 있는 디렉티브
+          Vue에 선언된 값을 사용하고 싶을때 
+          예를 들어 a 태그의 href 속성값에 Vue 선언된 값을 넣고싶을때
+          <a href="{{ link }}">링크</a> 불가 ( XXXXXX )
+          HTML 에서는 v-bind 디렉티브 사용
+
+          디렉티브 HTML 태그안에 들어가는 속성 역할
+          v- 접두사가 붙는다
+          html 속성에 접근하는 v-bind
+          Vue에서는 자주 사용되는 디렉티브 반복을 피하기 위해 줄임말 제공
+          v-bind 와 v-on에 대해 특별한 약어 제공
+          v-bind:href="url" 을 줄여서 :href="url" 표기
+
+          v-on 약어
+          v-on:click="doSomething" 을 줄여서 @click="doSomething" 이라고 표기
+          
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90-vuejs-004-vuejs-directive-v-once-49b6c0a577e0 >
+          일회성 디렉티브
+          v-once
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90-vuejs-005-vuejs-directive-v-html-f221dd096d6a >
+          HTML 코드를 직접 template에 넣어주는 v-html
+          v-html
+          data의 값을 출력하는데 관련이 있는 디렉티브 마지막 v-html : HTML 코드를 직접적으로 입력해줄때 사용
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90-vuejs-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%A6%AC%EC%8A%A4%EB%84%88-v-on-vuejs-directive-625bfc661c75 >
+          이벤트 리스터 v-on 
+          v-on
+          이벤트와 관련한 디렉티브중 가장 많이 사용
+          DOM 이벤트를 듣고 트리거 될때 javaScript를 실행할수 있음
+
+          Event Modifier 이벤트 조정자 혹은 수식어
+
+          < https://medium.com/@hozacho/v-on-%ED%85%9C%ED%94%8C%EB%A6%BF%EC%97%90-%EC%A7%81%EC%A0%91-javascript-%EC%BD%94%EB%93%9C-%EB%84%A3%EA%B8%B0-%EB%A7%A8%EB%95%85%EC%97%90-vuejs-f0609a7756b7 >
+          
+          템플릿에 직접 JavaScript 코드 넣기 
+          이전글에선 methods 객체에 선언된 함수를 v-on 디렉티브를 이용해 실행하였음.
+
+          이번엔 methods 객체를 이용하지않고 직접 JavaScript 코드를 template 내에 입력하는 방법을 사용
+
+          버튼을 클릭하면 클릭한 횟수가 +1 증가하는 Application 
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90-vuejs-%EA%B3%84%EC%82%B0%EB%90%9C-%EC%86%8D%EC%84%B1-vuejs-instance-computed-93cb6ad7dca9 >
+
+          계산된 속성 computed , computed vs methods / VueJS Instance
+          복잡한 계산식을 계산해서 값을 return 해주는 계산된 속성 computed
+
+          computed VS methods의 차이점
+          computed 내의 함수는 자신이 참고하고 있는 변수가 변경될 때만 재실행 되고
+          methods 내의 함수는 자신이 참고하고 있는 변수가 변경될 뿐만 아니라 계산식하고 관련없는 변수가 변경될때도 재실행 됨
+
+          어떤 값이 변경될때 아무상관없이 함수가 재실행되면 비효율적이고 비생산적인 계산으로 인해 퍼포먼스가 느려짐
+          이를 피하기 위해선 참고하고 있는 값의 변경에만 재실행을 하는 특별한 속성(computed) 을 사용한다.
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90vuejs-%EC%A1%B0%EA%B1%B4%EB%B6%80-%EB%A0%8C%EB%8D%94%EB%A7%81-v-for-v-for-vs-v-show-bbc7744fb512 >
+
+          조건부 렌더링 v-if, v-else ,  v-for / v-for vs v-show
+          v-if 를 갖는 template를 활용한 조건부 그룹
+          v-if 디렉티브는 하나의 태그에만 동작하지않고 해당 태그의 하위 태그에도 동작 
+          template태그를 활용하여 조건부 그룹을 만듬
+
+          v-if 디렉티브와 비슷한 역할을 하는 v-show 디렉티브를 제공
+          마찬가지로 조건상태에 따라 결과값으로 보이거나 보이지 않는다. v-show="조건상태"
+
+          v-if vs v-show 차이
+          v-show 태그는 실제로 코드는 삽입되지만 display:none 스타일로 보이지않음-
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90vuejs-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EC%8A%A4%ED%83%80%EC%9D%BC-%EB%B0%94%EC%9D%B8%EB%94%A9-3579817f1dc1 >
+          클래스(class 속성)와 스타일 바인딩
+          v-bind:class="클래스명"
+          v-bind:class="{클래스명:조건}" 문자열과 객체 또는 배열을 둘다 받을수 있습니다.
+          객체를 받은경우에는 클래스명은 객체의 속성키에,해당 클래스가 적용되야 하는 조건이 속성값으로 들어감
+
+          스타일 바인딩
+          v-for 디렉티브를 잘 사용한다면 클래스가 아닌 스타일을 직접 바인딩하는것만으로도 각 요소들의 스타일을 많은부분 컨트롤 가능
+          v-bind:style 객체 구문은 매우 직설적 CSS처럼 보이지만 [JavaScript 객체]
+          속성이름에 camelCase 와 kebab-case 따옴표를 함께 사용
+          v-bind:style="{ 스타일명 : 스타일값 , 스타일명 : 스타일값}"
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90vuejs-computed-vs-watch-%EC%96%B8%EC%A0%9C%EC%8D%A8%EC%95%BC%ED%95%A0%EA%B9%8C-d25316c4ef42  >
+          computed VS watch 
+          계산된 속성인 computed와 비슷한 역할을 하는 watch
+          어떻게 사용하느냐에 따라 watch가 computed의 역할까지도 할수 있다
+          watch는 말 그대로 특정 대상을 보고있는 감시자 역할을 한다고 이해하면된다
+          지정한 대상의 값이 변경될때마다 정의한 함수가 실행된다
+
+          watch 남용사례
+          computed는 이미 정의된 계산식에 따라 결과값을 반환할때 사용되며
+          watch는 어떤 특정 조건에서 함수를 실행시키기 위한 트리거로 사용
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90vuejs-%EC%97%AC%EB%9F%AC-%EC%9D%B8%EC%8A%A4%ED%84%B4%EC%8A%A4-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-multiple-instance-e89b7d94a5f5 >
+
+          여러 인스턴스 사용하기
+          현재까지는 특정 div에 하나의 인스턴스를 선언하고 인스턴스 내에서 여러가지 속성(data,computed,methods)를 사용
+          단순한 예로 id="app"인 div에 첫번째 뷰
+          id="app2" 인 div에 두번째 vue를 선언해서 각각의 div에 vue 인스턴스가 적용되는것을 확인함
+          하지만 두 Vue인스턴스는 따로 선언되어있을뿐 서로 분리된 객체
+          이 둘이 관계를 맺도록 하려면 어떻게 해야하나.?
+
+
+          Vue 인스턴스끼리가 아닌 외부에서도 vm1을 사용할수 있다. ex) setTimeout
+
+          거꾸로 접근 createdData = { title : '첫 인스턴스 '} object를 생성해주고 vue 인스턴스의 data에 넣어주고 테스트
+
+          < https://medium.com/@hozacho/%EB%A7%A8%EB%95%85%EC%97%90vuejs-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8%EC%9D%98-%EC%82%AC%EC%9A%A9-intro-to-components-74ce9e9f9986 >
+          컴포넌트의 사용 / intro to Components
+
+          컴포넌트는 하나의 독립된 기능을 하는 부품          
+          똑같은 인스턴스를 여러군데에서 사용해야 하는 경우 여러번 반복해주는것은 비효율적인 방법
+          new Vue({el: '#app1',data: {title: '안녕하세요!!'}
+          new Vue({el: '#app2',data: {title: '안녕하세요!!'}
+          new Vue({el: '#app3',data: {title: '안녕하세요!!'}
+
+          반복해서 사용하는것을 피하는 방법이 컴포넌트를 활용한 방법
+          반복사용할만한 것들을 컴포넌트로 만들어두고 필요할때마다 꺼내어 쓴다
+          컴포넌트 생성하는 법 :: Vue.component('태그이름',옵션)
+})
+
+
+
+      -->
+  </body>
+</html>
