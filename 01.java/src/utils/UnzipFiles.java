@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -38,16 +39,19 @@ public class UnzipFiles {
     }
 
     private static void unzip(File zipFile, File destDir) {
-        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFile), StandardCharsets.ISO_8859_1)) {
+        try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFile), Charset.forName("EUC-KR"))) {
             ZipEntry entry = zipIn.getNextEntry();
 
             while (entry != null) {
-                String filePath = destDir + File.separator + entry.getName();
+                String filePath = destDir + File.separator + zipFile.getName().replace(".zip", "") +
+                        File.separator + entry.getName();
 
                 // Create necessary directories
+                File entryFile = new File(filePath);
                 if (entry.isDirectory()) {
-                    new File(filePath).mkdirs();
+                    entryFile.mkdirs();
                 } else {
+                    entryFile.getParentFile().mkdirs();
                     extractFile(zipIn, filePath);
                 }
 
