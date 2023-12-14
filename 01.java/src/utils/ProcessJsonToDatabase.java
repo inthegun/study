@@ -110,8 +110,8 @@ public class ProcessJsonToDatabase {
             connection.setAutoCommit(true);
             // 데이터베이스에 데이터 삽입하는 코드 작성
             // PreparedStatement를 사용하면 SQL 인젝션을 방지할 수 있습니다.
-            String sql = "INSERT INTO pmntn (FID, PMNTN_SN , MNTN_CODE, MNTN_NM, PMNTN_NM, PMNTN_MAIN , PMNTN_LT , PMNTN_DFFL , PMNTN_UPPL, PMNTN_GODN, PMNTN_MTRQ , PMNTN_CNRL,PMNTN_CLS_, PMNTN_RISK, PMNTN_RECO , DATA_STDR_ , MNTN_ID)" +
-                         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO pmntn (FID, PMNTN_SN , MNTN_CODE, MNTN_NM, PMNTN_NM, PMNTN_MAIN , PMNTN_LT , PMNTN_DFFL , PMNTN_UPPL, PMNTN_GODN, PMNTN_MTRQ , PMNTN_CNRL,PMNTN_CLS_, PMNTN_RISK, PMNTN_RECO , DATA_STDR_ , MNTN_ID , PATHS)" +
+                         " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             boolean bool = attributeName.length < 17 ? false : true;
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -132,6 +132,7 @@ public class ProcessJsonToDatabase {
                 preparedStatement.setString(15, attributeName[14]); //PMNTN_RECO
                 preparedStatement.setString(16, attributeName[15]); //DATA_STDR_
                 preparedStatement.setString(17, bool ? attributeName[16] : "" ); // MNTN_ID
+                preparedStatement.setString(18, paths); //paths
                 // 필요한 데이터에 따라 set 메소드 호출 및 인덱스 수정
 
                 // 실행
@@ -156,8 +157,8 @@ public class ProcessJsonToDatabase {
         try (Connection connection = DriverManager.getConnection(databaseUrl, databaseUsername, databasePassword)) {
             ++count;
             connection.setAutoCommit(true);
-            String sql = "INSERT INTO pmntn_spot (FID ,PMNTN_SPOT, MNTN_CODE, MANAGE_SP1 ,MANAGE_SP2 , DETAIL_SPO, ETC_MATTER,MNTN_NM,PAST_SPOT_,MNTN_ID ) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO pmntn_spot (FID ,PMNTN_SPOT, MNTN_CODE, MANAGE_SP1 ,MANAGE_SP2 , DETAIL_SPO, ETC_MATTER,MNTN_NM,PAST_SPOT_,MNTN_ID,SPOT ) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, attributeName[0]); // FID
@@ -170,6 +171,7 @@ public class ProcessJsonToDatabase {
                 preparedStatement.setString(8, attributeName[7]); // MNTN_NM
                 preparedStatement.setString(9, attributeName[8]); // PAST_SPOT_
                 preparedStatement.setString(10, attributeName[9]); // MNTN_ID
+                preparedStatement.setString(11, spot); // spot
 
                 preparedStatement.executeUpdate();
 //                if(count % 100 == 0){
